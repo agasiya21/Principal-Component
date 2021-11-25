@@ -1,0 +1,93 @@
+---
+title: "Justice"
+author: "bStudio"
+date: "11/18/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(pander)
+wfp <- readRDS("wfp.rds")
+```
+
+```{r}
+head(wfp)
+```
+
+```{r}
+library(magrittr)
+```
+
+```{r}
+wfp %>% 
+  mutate(
+    price_cat = case_when(price > 40 ~ "Cheap", price > 50 ~ "Moderate", T ~ "Something"),
+   part = case_when(month %in% c(month.abb[1:6]) ~ "First Half", month %in% c(month.abb[7:12]) ~ "Second Half"),
+   multi = price * year
+  ) %>% 
+  select(multi, price_cat:part) %>% 
+  head(20)
+```
+
+# Univariate
+```{r}
+summary(wfp)
+```
+
+```{r}
+table(wfp$region)
+```
+
+```{r}
+table(wfp$period)
+```
+
+```{r}
+table(wfp$month) %>% pander()
+```
+
+```{r}
+mean(wfp$price)
+median(wfp$price)
+max(wfp$price)
+# min, max, IQR
+```
+
+```{r}
+hist(wfp$price)
+```
+
+## GGPlot
+```{r}
+ggplot(wfp, aes(x = price)) +
+  geom_histogram()
+```
+
+```{r fig.width=16}
+ggplot(data = wfp) + geom_boxplot(aes(x = as.factor(year), y = price, fill = "red"))
+```
+
+```{r}
+wfp %>% 
+  group_by(region, year) %>% 
+  summarise(
+    mean = mean(price),
+    median = median(price)
+  )
+```
+
+```{r}
+wfp %>% 
+  group_by(year) %>% 
+  summarise(
+    mean = mean(price),
+    median = median(price)
+  ) %>% 
+  ggplot(aes(x = year)) + 
+  geom_line(aes(y = mean, color = "cyan")) +
+  geom_point(aes(y = median, size = 2, color = "purple")) + 
+  geom_line(aes(y = median, color = "blue"))
+```
