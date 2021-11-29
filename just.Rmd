@@ -10,15 +10,13 @@ knitr::opts_chunk$set(echo = TRUE)
 
 library(tidyverse)
 library(pander)
+library(ggpubr)
+library(magrittr)
 wfp <- readRDS("wfp.rds")
 ```
 
 ```{r}
 head(wfp)
-```
-
-```{r}
-library(magrittr)
 ```
 
 ```{r}
